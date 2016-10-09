@@ -6,6 +6,8 @@ categories: Herb
 comments: true
 ---
 
+![2-layer-nn]({{site.url}}/images/2-layer-nn.jpg)
+
 ## 网络结构
 - Input Layer  
 $X :\ $ 样本特征   $\ shape=(n,\ dim)$  
