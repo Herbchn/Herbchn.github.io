@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Herb Home</title>
+    <description>Hi</description>
+    <link>https://herbchn.github.io/</link>
+    <atom:link href="https://herbchn.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sun, 09 Oct 2016 23:30:32 +0800</pubDate>
+    <lastBuildDate>Sun, 09 Oct 2016 23:30:32 +0800</lastBuildDate>
+    <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Simple 2-Layer Neural Network</title>
+        <description>&lt;h2 id=&quot;section&quot;&gt;网络结构&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Input Layer  &lt;br /&gt;
+$X :\ $ 样本特征   $\ shape=(n,\ dim)$  &lt;br /&gt;
+$n :\ $ 样本个数  &lt;br /&gt;
+$dim :$ 样本的维度（即：输入层节点个数）&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Hidden Layer 1  &lt;br /&gt;
+$W_{1} :\ $ 权重矩阵  $\ shape=(dim,\ num_{h1})$   &lt;br /&gt;
+$\quad\quad\ \ $ $num_{h1} :\ $隐藏层1的隐藏节点个数  &lt;br /&gt;
+$b_{1} :\ $ 偏置向量  $ shape=(1,\ num_{h1})$  &lt;br /&gt;
+$z_{1} :\ $ 加权后得到的神经元输入  $ shape=(n,\ num_{h1})$  &lt;br /&gt;
+$a_{1} :\ $ 神经元输出的激活函数值  $ shape=(n,\ num_{h1})$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Hidden Layer 2   &lt;br /&gt;
+$W_{2} :\ $ 权重矩阵  $\  shape=(num_{h1},\ num_{h2})$  &lt;br /&gt;
+$\quad\quad\ \ $ $num_{h2}\ :\ $隐藏层2的隐藏节点个数    &lt;br /&gt;
+$b_{2} :\ $ 偏置向量  $\  shape=(1,\ num_{h2})$  &lt;br /&gt;
+$z_{2} :\ $ 加权后得到的神经元输入  $\  shape=(n,\ num_{h2})$  &lt;br /&gt;
+$a_{2} :\ $ 神经元输出的激活函数值  $\  shape=(1,\ num_{h2})$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Output Layer  &lt;br /&gt;
+$W_{3} :\ $ 权重矩阵  $ shape=(num_{h2},\ num_{h3})$  &lt;br /&gt;
+$\quad\quad\ \ $ $num_{h3}\ :\ $输出层节点个数（$num_{h3}$个分类）  &lt;br /&gt;
+$b_{3} :\ $ 偏置向量  $ shape=(1,\ num_{h3})$  &lt;br /&gt;
+$z_{3} :\ $ 加权后得到的神经元输入  $ shape=(n,\ num_{h3})$  &lt;br /&gt;
+$a_{3} :\ $ 经Softmax函数计算得到的输出值  $ shape=(n,\ num_{h3})$&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;forward-propagation&quot;&gt;Forward Propagation&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;计算第一层输入值： $z_{1}=X \cdot W_{1} + b_{1}$&lt;/li&gt;
+  &lt;li&gt;计算第一层激活值： $a_{1}=tanh(z_{1})$&lt;/li&gt;
+  &lt;li&gt;计算第二层输入值： $z_{2}=a_{1} \cdot W_{2} + b_{2}$&lt;/li&gt;
+  &lt;li&gt;计算第二层激活值：$a_{2}=tanh(z_{2})$&lt;/li&gt;
+  &lt;li&gt;计算输出层输入值：$z_{3}=a_{2} \cdot W_{3} + b_{3}$&lt;/li&gt;
+  &lt;li&gt;计算输出层激活值：$a_{3}=softmax(z_{3}) = \hat y$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;back-propagation&quot;&gt;Back Propagation&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;优化目标函数：交叉熵&lt;/p&gt;
+
+    &lt;p&gt;$J(y,\ \hat y)= - \frac {1}{N} \sum_{n \in N} \sum_{i \in C} y_{(n,\ i)} log \hat y_{(n,\ i)}$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;令：$\delta_{3} = \hat y - y $ 表示当前模型的预测误差（向量）&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;则：$\frac {\partial J}{\partial W_{3}} = a_{2}^{\mathrm {T}} \cdot \delta_{3}\quad $  且有： &lt;br /&gt;
+$\frac {\partial J}{\partial b_{3}} = \delta_{3}$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;令：$\delta_{2} = \delta_{3} \cdot W_{3}^{\mathrm{T}} *[1-tanh^2(z_{2})]$  表示残差&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;则：$\frac {\partial J}{\partial W_{2}} = a_{1}^{\mathrm {T}} \cdot \delta_{2} \quad $ 且有： &lt;br /&gt;
+$\frac {\partial J}{\partial b_{2}} = \delta_{2}$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;令：$\delta_{1} = \delta_{2} \cdot W_{2}^{\mathrm{T}} * [1-tanh^2(z_{1})]$ 表示残差&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;则：$\frac {\partial J}{\partial W_{1}} = X^{\mathrm {T}} \cdot \delta_{1}\quad $ 且有：&lt;br /&gt;
+$\frac {\partial J}{\partial b_{1}} = \delta_{1}$&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;book--blog&quot;&gt;Book &amp;amp; Blog&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://neuralnetworksanddeeplearning.com/&quot;&gt;《Neural Networks and Deep Learning》&lt;/a&gt;, Michael Nielsen.  &lt;br /&gt;
+中译本：  &lt;br /&gt;
+&lt;a href=&quot;https://www.gitbook.com/book/hit-scir/neural-networks-and-deep-learning-zh_cn/details&quot;&gt;《「 Neural Networks and Deep Learning 」中文翻译》&lt;/a&gt;，HIT-SCIR.   &lt;br /&gt;
+&lt;a href=&quot;http://wiki.jikexueyuan.com/project/neural-networks-and-deep-learning-zh-cn/&quot;&gt;《神经网络与深度学习》&lt;/a&gt;，极客学院。
+    &lt;blockquote&gt;
+      &lt;p&gt;HIT-SCIR：哈尔滨工业大学社会计算与信息检索研究中心(hit-scir)，主任刘挺教授,副主任秦兵教授。  &lt;br /&gt;
+极客学院：其下还有《TensorFlow 官方文档中文版》。&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;代码&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;# This function learns parameters for the neural network and returns the model.
+# - nn_hdim: Number of nodes in the hidden layer
+# - num_passes: Number of passes through the training data for gradient descent
+# - print_loss: If True, print the loss every 1000 iterations
+def build_model(nn_hdim, num_passes=20000, print_loss=False):
+    
+    # Initialize the parameters to random values. We need to learn these.
+    np.random.seed(0)
+    W1 = np.random.randn(nn_input_dim, nn_hdim[0]) / np.sqrt(nn_input_dim)
+    b1 = np.zeros((1, nn_hdim[0]))
+    W2 = np.random.randn(nn_hdim[0], nn_hdim[1]) / np.sqrt(nn_hdim[0])
+    b2 = np.zeros((1, nn_hdim[1]))
+    W3 = np.random.randn(nn_hdim[1], nn_output_dim)
+    b3 = np.zeros((1, nn_output_dim))
+
+    # This is what we return at the end
+    model = {}
+    
+    # Gradient descent. For each batch...
+    for i in xrange(0, num_passes):
+
+        # Forward propagation
+        z1 = X.dot(W1) + b1
+        a1 = np.tanh(z1)
+        z2 = a1.dot(W2) + b2
+        a2 = np.tanh(z2)
+        z3 = a2.dot(W3) + b3
+        exp_scores = np.exp(z3)
+        probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+
+        # Backpropagation
+        delta3 = probs
+        delta3[range(num_examples), y] -= 1
+        dW3 = (a2.T).dot(delta3)
+        db3 = np.sum(delta3, axis=0)
+        delta2 = delta3.dot(W3.T) * (1 - np.power(a2, 2))
+        dW2 = (a1.T).dot(delta2)
+        db2 = np.sum(delta2, axis=0)
+        delta1 = delta2.dot(W2.T) * (1 - np.power(a1, 2))
+        dW1 = np.dot(X.T, delta1)
+        db1 = np.sum(delta1, axis=0)
+
+        # Add regularization terms (b1 and b2 don&#39;t have regularization terms)\
+        dW3 += reg_lambda * W3
+        dW2 += reg_lambda * W2
+        dW1 += reg_lambda * W1
+
+        # Gradient descent parameter update
+        W1 += -epsilon * dW1
+        b1 += -epsilon * db1
+        W2 += -epsilon * dW2
+        b2 += -epsilon * db2
+        W3 += -epsilon * dW3
+        b3 += -epsilon * db3
+        
+        # Assign new parameters to the model
+        model = { &#39;W1&#39;: W1, &#39;b1&#39;: b1, &#39;W2&#39;: W2, &#39;b2&#39;: b2, &#39;W3&#39; : W3, &#39;b3&#39; : b3}
+        
+        # Optionally print the loss.
+# This is expensive because it uses the whole dataset, so we don&#39;t want to do it too often.*
+        if print_loss and i % 1000 == 0:
+            print &quot;Loss after iteration %i: %f&quot; %(i, calculate_loss(model))
+    
+    return model
+
+# start
+hidden_layer_dimensions = [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [20, 20], [50, 50]]
+for i, nn_hdim in enumerate(hidden_layer_dimensions):
+    model = build_model(nn_hdim, print_loss = True)
+&lt;/code&gt;&lt;/pre&gt;
+
+</description>
+        <pubDate>Tue, 20 Sep 2016 00:00:00 +0800</pubDate>
+        <link>https://herbchn.github.io/SimpleNN1/</link>
+        <guid isPermaLink="true">https://herbchn.github.io/SimpleNN1/</guid>
+        
+        
+        <category>herb</category>
+        
+      </item>
+    
+      <item>
+        <title>Simple 2-Layer Neural Network</title>
+        <description>&lt;h2 id=&quot;section&quot;&gt;网络结构&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Input Layer  &lt;br /&gt;
+$X :\ $ 样本特征   $\ shape=(n,\ dim)$  &lt;br /&gt;
+$n :\ $ 样本个数  &lt;br /&gt;
+$dim :$ 样本的维度（即：输入层节点个数）&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Hidden Layer 1  &lt;br /&gt;
+$W_{1} :\ $ 权重矩阵  $\ shape=(dim,\ num_{h1})$   &lt;br /&gt;
+$\quad\quad\ \ $ $num_{h1} :\ $隐藏层1的隐藏节点个数  &lt;br /&gt;
+$b_{1} :\ $ 偏置向量  $ shape=(1,\ num_{h1})$  &lt;br /&gt;
+$z_{1} :\ $ 加权后得到的神经元输入  $ shape=(n,\ num_{h1})$  &lt;br /&gt;
+$a_{1} :\ $ 神经元输出的激活函数值  $ shape=(n,\ num_{h1})$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Hidden Layer 2   &lt;br /&gt;
+$W_{2} :\ $ 权重矩阵  $\  shape=(num_{h1},\ num_{h2})$  &lt;br /&gt;
+$\quad\quad\ \ $ $num_{h2}\ :\ $隐藏层2的隐藏节点个数    &lt;br /&gt;
+$b_{2} :\ $ 偏置向量  $\  shape=(1,\ num_{h2})$  &lt;br /&gt;
+$z_{2} :\ $ 加权后得到的神经元输入  $\  shape=(n,\ num_{h2})$  &lt;br /&gt;
+$a_{2} :\ $ 神经元输出的激活函数值  $\  shape=(1,\ num_{h2})$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Output Layer  &lt;br /&gt;
+$W_{3} :\ $ 权重矩阵  $ shape=(num_{h2},\ num_{h3})$  &lt;br /&gt;
+$\quad\quad\ \ $ $num_{h3}\ :\ $输出层节点个数（$num_{h3}$个分类）  &lt;br /&gt;
+$b_{3} :\ $ 偏置向量  $ shape=(1,\ num_{h3})$  &lt;br /&gt;
+$z_{3} :\ $ 加权后得到的神经元输入  $ shape=(n,\ num_{h3})$  &lt;br /&gt;
+$a_{3} :\ $ 经Softmax函数计算得到的输出值  $ shape=(n,\ num_{h3})$&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;forward-propagation&quot;&gt;Forward Propagation&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;计算第一层输入值： $z_{1}=X \cdot W_{1} + b_{1}$&lt;/li&gt;
+  &lt;li&gt;计算第一层激活值： $a_{1}=tanh(z_{1})$&lt;/li&gt;
+  &lt;li&gt;计算第二层输入值： $z_{2}=a_{1} \cdot W_{2} + b_{2}$&lt;/li&gt;
+  &lt;li&gt;计算第二层激活值：$a_{2}=tanh(z_{2})$&lt;/li&gt;
+  &lt;li&gt;计算输出层输入值：$z_{3}=a_{2} \cdot W_{3} + b_{3}$&lt;/li&gt;
+  &lt;li&gt;计算输出层激活值：$a_{3}=softmax(z_{3}) = \hat y$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;back-propagation&quot;&gt;Back Propagation&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;优化目标函数：交叉熵&lt;/p&gt;
+
+    &lt;p&gt;$J(y,\ \hat y)= - \frac {1}{N} \sum_{n \in N} \sum_{i \in C} y_{(n,\ i)} log \hat y_{(n,\ i)}$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;令：$\delta_{3} = \hat y - y $ 表示当前模型的预测误差（向量）&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;则：$\frac {\partial J}{\partial W_{3}} = a_{2}^{\mathrm {T}} \cdot \delta_{3}\quad $  且有： &lt;br /&gt;
+$\frac {\partial J}{\partial b_{3}} = \delta_{3}$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;令：$\delta_{2} = \delta_{3} \cdot W_{3}^{\mathrm{T}} *[1-tanh^2(z_{2})]$  表示残差&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;则：$\frac {\partial J}{\partial W_{2}} = a_{1}^{\mathrm {T}} \cdot \delta_{2} \quad $ 且有： &lt;br /&gt;
+$\frac {\partial J}{\partial b_{2}} = \delta_{2}$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;令：$\delta_{1} = \delta_{2} \cdot W_{2}^{\mathrm{T}} * [1-tanh^2(z_{1})]$ 表示残差&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;则：$\frac {\partial J}{\partial W_{1}} = X^{\mathrm {T}} \cdot \delta_{1}\quad $ 且有：&lt;br /&gt;
+$\frac {\partial J}{\partial b_{1}} = \delta_{1}$&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;book--blog&quot;&gt;Book &amp;amp; Blog&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://neuralnetworksanddeeplearning.com/&quot;&gt;《Neural Networks and Deep Learning》&lt;/a&gt;, Michael Nielsen.  &lt;br /&gt;
+中译本：  &lt;br /&gt;
+&lt;a href=&quot;https://www.gitbook.com/book/hit-scir/neural-networks-and-deep-learning-zh_cn/details&quot;&gt;《「 Neural Networks and Deep Learning 」中文翻译》&lt;/a&gt;，HIT-SCIR.   &lt;br /&gt;
+&lt;a href=&quot;http://wiki.jikexueyuan.com/project/neural-networks-and-deep-learning-zh-cn/&quot;&gt;《神经网络与深度学习》&lt;/a&gt;，极客学院。
+    &lt;blockquote&gt;
+      &lt;p&gt;HIT-SCIR：哈尔滨工业大学社会计算与信息检索研究中心(hit-scir)，主任刘挺教授,副主任秦兵教授。  &lt;br /&gt;
+极客学院：其下还有《TensorFlow 官方文档中文版》。&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;section-1&quot;&gt;代码&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;# This function learns parameters for the neural network and returns the model.
+# - nn_hdim: Number of nodes in the hidden layer
+# - num_passes: Number of passes through the training data for gradient descent
+# - print_loss: If True, print the loss every 1000 iterations
+def build_model(nn_hdim, num_passes=20000, print_loss=False):
+    
+    # Initialize the parameters to random values. We need to learn these.
+    np.random.seed(0)
+    W1 = np.random.randn(nn_input_dim, nn_hdim[0]) / np.sqrt(nn_input_dim)
+    b1 = np.zeros((1, nn_hdim[0]))
+    W2 = np.random.randn(nn_hdim[0], nn_hdim[1]) / np.sqrt(nn_hdim[0])
+    b2 = np.zeros((1, nn_hdim[1]))
+    W3 = np.random.randn(nn_hdim[1], nn_output_dim)
+    b3 = np.zeros((1, nn_output_dim))
+
+    # This is what we return at the end
+    model = {}
+    
+    # Gradient descent. For each batch...
+    for i in xrange(0, num_passes):
+
+        # Forward propagation
+        z1 = X.dot(W1) + b1
+        a1 = np.tanh(z1)
+        z2 = a1.dot(W2) + b2
+        a2 = np.tanh(z2)
+        z3 = a2.dot(W3) + b3
+        exp_scores = np.exp(z3)
+        probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+
+        # Backpropagation
+        delta3 = probs
+        delta3[range(num_examples), y] -= 1
+        dW3 = (a2.T).dot(delta3)
+        db3 = np.sum(delta3, axis=0)
+        delta2 = delta3.dot(W3.T) * (1 - np.power(a2, 2))
+        dW2 = (a1.T).dot(delta2)
+        db2 = np.sum(delta2, axis=0)
+        delta1 = delta2.dot(W2.T) * (1 - np.power(a1, 2))
+        dW1 = np.dot(X.T, delta1)
+        db1 = np.sum(delta1, axis=0)
+
+        # Add regularization terms (b1 and b2 don&#39;t have regularization terms)\
+        dW3 += reg_lambda * W3
+        dW2 += reg_lambda * W2
+        dW1 += reg_lambda * W1
+
+        # Gradient descent parameter update
+        W1 += -epsilon * dW1
+        b1 += -epsilon * db1
+        W2 += -epsilon * dW2
+        b2 += -epsilon * db2
+        W3 += -epsilon * dW3
+        b3 += -epsilon * db3
+        
+        # Assign new parameters to the model
+        model = { &#39;W1&#39;: W1, &#39;b1&#39;: b1, &#39;W2&#39;: W2, &#39;b2&#39;: b2, &#39;W3&#39; : W3, &#39;b3&#39; : b3}
+        
+        # Optionally print the loss.
+# This is expensive because it uses the whole dataset, so we don&#39;t want to do it too often.*
+        if print_loss and i % 1000 == 0:
+            print &quot;Loss after iteration %i: %f&quot; %(i, calculate_loss(model))
+    
+    return model
+
+# start
+hidden_layer_dimensions = [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [20, 20], [50, 50]]
+for i, nn_hdim in enumerate(hidden_layer_dimensions):
+    model = build_model(nn_hdim, print_loss = True)
+&lt;/code&gt;&lt;/pre&gt;
+
+</description>
+        <pubDate>Tue, 20 Sep 2016 00:00:00 +0800</pubDate>
+        <link>https://herbchn.github.io/SimpleNN/</link>
+        <guid isPermaLink="true">https://herbchn.github.io/SimpleNN/</guid>
+        
+        
+        <category>herb</category>
+        
+      </item>
+    
+  </channel>
+</rss>

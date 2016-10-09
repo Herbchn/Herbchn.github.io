@@ -1,0 +1,151 @@
+---
+layout: post
+title:  "Simple 2-Layer Neural Network"
+date:   2016-09-20
+categories: Herb
+comments: true
+---
+
+## 网络结构
+- Input Layer  
+$X :\ $ 样本特征   $\ shape=(n,\ dim)$  
+$n :\ $ 样本个数  
+$dim :$ 样本的维度（即：输入层节点个数）
+
+- Hidden Layer 1  
+$W_{1} :\ $ 权重矩阵  $\ shape=(dim,\ num_{h1})$   
+$\quad\quad\ \ $ $num_{h1} :\ $隐藏层1的隐藏节点个数  
+$b_{1} :\ $ 偏置向量  $ shape=(1,\ num_{h1})$  
+$z_{1} :\ $ 加权后得到的神经元输入  $ shape=(n,\ num_{h1})$  
+$a_{1} :\ $ 神经元输出的激活函数值  $ shape=(n,\ num_{h1})$  
+
+
+- Hidden Layer 2   
+$W_{2} :\ $ 权重矩阵  $\  shape=(num_{h1},\ num_{h2})$  
+$\quad\quad\ \ $ $num_{h2}\ :\ $隐藏层2的隐藏节点个数    
+$b_{2} :\ $ 偏置向量  $\  shape=(1,\ num_{h2})$  
+$z_{2} :\ $ 加权后得到的神经元输入  $\  shape=(n,\ num_{h2})$  
+$a_{2} :\ $ 神经元输出的激活函数值  $\  shape=(1,\ num_{h2})$  
+
+
+- Output Layer  
+$W_{3} :\ $ 权重矩阵  $ shape=(num_{h2},\ num_{h3})$  
+$\quad\quad\ \ $ $num_{h3}\ :\ $输出层节点个数（$num_{h3}$个分类）  
+$b_{3} :\ $ 偏置向量  $ shape=(1,\ num_{h3})$  
+$z_{3} :\ $ 加权后得到的神经元输入  $ shape=(n,\ num_{h3})$  
+$a_{3} :\ $ 经Softmax函数计算得到的输出值  $ shape=(n,\ num_{h3})$  
+
+
+##  Forward Propagation 
+- 计算第一层输入值： $z_{1}=X \cdot W_{1} + b_{1}$  
+- 计算第一层激活值： $a_{1}=tanh(z_{1})$  
+- 计算第二层输入值： $z_{2}=a_{1} \cdot W_{2} + b_{2}$  
+- 计算第二层激活值：$a_{2}=tanh(z_{2})$  
+- 计算输出层输入值：$z_{3}=a_{2} \cdot W_{3} + b_{3}$  
+- 计算输出层激活值：$a_{3}=softmax(z_{3}) = \hat y$  
+
+## Back Propagation  
+- 优化目标函数：交叉熵    
+
+    $J(y,\ \hat y)= - \frac {1}{N} \sum_{n \in N} \sum_{i \in C} y_{(n,\ i)} log \hat y_{(n,\ i)}$
+
+- 令：$\delta_{3} = \hat y - y $ 表示当前模型的预测误差（向量）  
+
+- 则：$\frac {\partial J}{\partial W_{3}} = a_{2}^{\mathrm {T}} \cdot \delta_{3}\quad $  且有： 
+$\frac {\partial J}{\partial b_{3}} = \delta_{3}$  
+
+- 令：$\delta_{2} = \delta_{3} \cdot W_{3}^{\mathrm{T}} *[1-tanh^2(z_{2})]$  表示残差
+
+- 则：$\frac {\partial J}{\partial W_{2}} = a_{1}^{\mathrm {T}} \cdot \delta_{2} \quad $ 且有： 
+$\frac {\partial J}{\partial b_{2}} = \delta_{2}$  
+
+- 令：$\delta_{1} = \delta_{2} \cdot W_{2}^{\mathrm{T}} * [1-tanh^2(z_{1})]$ 表示残差 
+
+- 则：$\frac {\partial J}{\partial W_{1}} = X^{\mathrm {T}} \cdot \delta_{1}\quad $ 且有：
+$\frac {\partial J}{\partial b_{1}} = \delta_{1}$
+
+## Book & Blog
+- [《Neural Networks and Deep Learning》](http://neuralnetworksanddeeplearning.com/), Michael Nielsen.  
+中译本：  
+[《「 Neural Networks and Deep Learning 」中文翻译》](https://www.gitbook.com/book/hit-scir/neural-networks-and-deep-learning-zh_cn/details)，HIT-SCIR.   
+[《神经网络与深度学习》](http://wiki.jikexueyuan.com/project/neural-networks-and-deep-learning-zh-cn/)，极客学院。  
+> HIT-SCIR：哈尔滨工业大学社会计算与信息检索研究中心(hit-scir)，主任刘挺教授,副主任秦兵教授。  
+极客学院：其下还有《TensorFlow 官方文档中文版》。
+
+
+## 代码
+```python
+# This function learns parameters for the neural network and returns the model.
+# - nn_hdim: Number of nodes in the hidden layer
+# - num_passes: Number of passes through the training data for gradient descent
+# - print_loss: If True, print the loss every 1000 iterations
+def build_model(nn_hdim, num_passes=20000, print_loss=False):
+    
+    # Initialize the parameters to random values. We need to learn these.
+    np.random.seed(0)
+    W1 = np.random.randn(nn_input_dim, nn_hdim[0]) / np.sqrt(nn_input_dim)
+    b1 = np.zeros((1, nn_hdim[0]))
+    W2 = np.random.randn(nn_hdim[0], nn_hdim[1]) / np.sqrt(nn_hdim[0])
+    b2 = np.zeros((1, nn_hdim[1]))
+    W3 = np.random.randn(nn_hdim[1], nn_output_dim)
+    b3 = np.zeros((1, nn_output_dim))
+
+    # This is what we return at the end
+    model = {}
+    
+    # Gradient descent. For each batch...
+    for i in xrange(0, num_passes):
+
+        # Forward propagation
+        z1 = X.dot(W1) + b1
+        a1 = np.tanh(z1)
+        z2 = a1.dot(W2) + b2
+        a2 = np.tanh(z2)
+        z3 = a2.dot(W3) + b3
+        exp_scores = np.exp(z3)
+        probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+
+        # Backpropagation
+        delta3 = probs
+        delta3[range(num_examples), y] -= 1
+        dW3 = (a2.T).dot(delta3)
+        db3 = np.sum(delta3, axis=0)
+        delta2 = delta3.dot(W3.T) * (1 - np.power(a2, 2))
+        dW2 = (a1.T).dot(delta2)
+        db2 = np.sum(delta2, axis=0)
+        delta1 = delta2.dot(W2.T) * (1 - np.power(a1, 2))
+        dW1 = np.dot(X.T, delta1)
+        db1 = np.sum(delta1, axis=0)
+
+        # Add regularization terms (b1 and b2 don't have regularization terms)\
+        dW3 += reg_lambda * W3
+        dW2 += reg_lambda * W2
+        dW1 += reg_lambda * W1
+
+        # Gradient descent parameter update
+        W1 += -epsilon * dW1
+        b1 += -epsilon * db1
+        W2 += -epsilon * dW2
+        b2 += -epsilon * db2
+        W3 += -epsilon * dW3
+        b3 += -epsilon * db3
+        
+        # Assign new parameters to the model
+        model = { 'W1': W1, 'b1': b1, 'W2': W2, 'b2': b2, 'W3' : W3, 'b3' : b3}
+        
+        # Optionally print the loss.
+# This is expensive because it uses the whole dataset, so we don't want to do it too often.*
+        if print_loss and i % 1000 == 0:
+            print "Loss after iteration %i: %f" %(i, calculate_loss(model))
+    
+    return model
+
+# start
+hidden_layer_dimensions = [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [20, 20], [50, 50]]
+for i, nn_hdim in enumerate(hidden_layer_dimensions):
+    model = build_model(nn_hdim, print_loss = True)
+```
+
+
+
+

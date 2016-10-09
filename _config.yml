@@ -1,0 +1,31 @@
+# Site settings
+title: Herb Home
+email: hb.zhang.chn@gmail.com
+description: Hi
+baseurl: ""
+url: "https://herbchn.github.io"
+
+author:
+  name     : 'Herb'
+  email    : hb.zhang.chn@gmail.com
+  url      : https://herbchn.github.io
+  facebook : #
+  twitter  : https://twitter.com/Herb_Kitty/
+
+github: https://github.com/Herbchn
+disqus_shortname: ""
+google_analytics: 
+
+paginate: 5
+comments: true
+paginate_path: "/page/:num"
+
+sass:
+  style: :compressed
+  sass_dir: _sass
+
+# Build settings
+markdown  : kramdown
+kramdown:
+  input: GFM
+permalink : /:title/
