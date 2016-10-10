@@ -5,9 +5,54 @@
     <description>Hi</description>
     <link>https://herbchn.github.io/</link>
     <atom:link href="https://herbchn.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 10 Oct 2016 17:48:35 +0800</pubDate>
-    <lastBuildDate>Mon, 10 Oct 2016 17:48:35 +0800</lastBuildDate>
+    <pubDate>Mon, 10 Oct 2016 17:55:25 +0800</pubDate>
+    <lastBuildDate>Mon, 10 Oct 2016 17:55:25 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
+    
+      <item>
+        <title>Markdown test</title>
+        <description>&lt;h1 id=&quot;section&quot;&gt;这是一级标题&lt;/h1&gt;
+&lt;h2 id=&quot;section-1&quot;&gt;这是二级标题&lt;/h2&gt;
+&lt;h3 id=&quot;section-2&quot;&gt;这是三级标题&lt;/h3&gt;
+&lt;h6 id=&quot;section-3&quot;&gt;这是六级标题&lt;/h6&gt;
+
+&lt;p&gt;[TOC]&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;这是一级引用&lt;/p&gt;
+  &lt;blockquote&gt;
+    &lt;p&gt;这是二级引用&lt;/p&gt;
+    &lt;blockquote&gt;
+      &lt;p&gt;这是三级引用&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/blockquote&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;这是一级引用&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;
+var canvas = document.getElementById(&quot;canvas&quot;);
+
+var context = canvas.getContext(&quot;2d&quot;);
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这是&lt;code&gt;javascript&lt;/code&gt;代码&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://images.cnitblog.com/blog/404392/201501/122257231047591.jpg&quot; alt=&quot;Markdown&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;$x = \sum_1^5a*b$&lt;/p&gt;
+</description>
+        <pubDate>Mon, 10 Oct 2016 00:00:00 +0800</pubDate>
+        <link>https://herbchn.github.io/test/</link>
+        <guid isPermaLink="true">https://herbchn.github.io/test/</guid>
+        
+        
+        <category>test</category>
+        
+      </item>
     
       <item>
         <title>Simple 2-Layer Neural Network</title>
