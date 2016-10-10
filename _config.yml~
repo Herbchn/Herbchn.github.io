@@ -25,7 +25,8 @@ sass:
   sass_dir: _sass
 
 # Build settings
-markdown  : kramdown
-kramdown:
-   input: GFM
+# markdown  : kramdown
+markdown: maruku
+# kramdown:
+#  input: GFM
 permalink : /:title/

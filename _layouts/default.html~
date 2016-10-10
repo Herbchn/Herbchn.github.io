@@ -5,7 +5,9 @@ layout: compress
 <html lang="pt-br">
   <head>
     {% include head.html %}
-
+    {% if page.use_math %}
+      {% include mathjax_support %}
+    {% endif %}
   </head>
   <body class="{{ page.slug }}">
     <main class="main">
