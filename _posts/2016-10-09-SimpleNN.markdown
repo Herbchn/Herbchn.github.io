@@ -50,7 +50,7 @@ $a_{3} :\ $ 经Softmax函数计算得到的输出值  $ shape=(n,\ num_{h3})$
 ## Back Propagation  
 - 优化目标函数：交叉熵    
 
-    $J(y,\ \hat y)= - \frac {1}{N} \sum_{n \in N} \sum_{i \in C} y_{(n,\ i)} log \hat y_{(n,\ i)}$
+    $J(y,\ \hat y)= - \frac {1}{N} \sum_{n \in N} \sum_{i \in C} y_{(n,\ i)} \log \hat y_{(n,\ i)}$
 
 - 令：$\delta_{3} = \hat y - y $ 表示当前模型的预测误差（向量）  
 
