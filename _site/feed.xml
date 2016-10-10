@@ -5,8 +5,8 @@
     <description>Hi</description>
     <link>https://herbchn.github.io/</link>
     <atom:link href="https://herbchn.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 10 Oct 2016 17:30:32 +0800</pubDate>
-    <lastBuildDate>Mon, 10 Oct 2016 17:30:32 +0800</lastBuildDate>
+    <pubDate>Mon, 10 Oct 2016 17:35:54 +0800</pubDate>
+    <lastBuildDate>Mon, 10 Oct 2016 17:35:54 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -94,7 +94,7 @@ $\frac {\partial J}{\partial b_{1}} = \delta_{1}$&lt;/p&gt;
 &lt;a href=&quot;https://www.gitbook.com/book/hit-scir/neural-networks-and-deep-learning-zh_cn/details&quot;&gt;《「 Neural Networks and Deep Learning 」中文翻译》&lt;/a&gt;，HIT-SCIR.   &lt;br /&gt;
 &lt;a href=&quot;http://wiki.jikexueyuan.com/project/neural-networks-and-deep-learning-zh-cn/&quot;&gt;《神经网络与深度学习》&lt;/a&gt;，极客学院。
     &lt;blockquote&gt;
-      &lt;p&gt;HIT-SCIR：哈尔滨工业大学社会计算与信息检索研究中心(hit-scir)，主任刘挺教授,副主任秦兵教授。  &lt;br /&gt;
+      &lt;p&gt;HIT-SCIR：哈尔滨工业大学社会计算与信息检索研究中心(hit-scir)，主任刘挺教授,副主任秦兵教授。&lt;br /&gt;
 极客学院：其下还有《TensorFlow 官方文档中文版》。&lt;/p&gt;
     &lt;/blockquote&gt;
   &lt;/li&gt;

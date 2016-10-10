@@ -72,8 +72,8 @@ $\frac {\partial J}{\partial b_{1}} = \delta_{1}$
 中译本：  
 [《「 Neural Networks and Deep Learning 」中文翻译》](https://www.gitbook.com/book/hit-scir/neural-networks-and-deep-learning-zh_cn/details)，HIT-SCIR.   
 [《神经网络与深度学习》](http://wiki.jikexueyuan.com/project/neural-networks-and-deep-learning-zh-cn/)，极客学院。  
-> HIT-SCIR：哈尔滨工业大学社会计算与信息检索研究中心(hit-scir)，主任刘挺教授,副主任秦兵教授。  
-极客学院：其下还有《TensorFlow 官方文档中文版》。
+> HIT-SCIR：哈尔滨工业大学社会计算与信息检索研究中心(hit-scir)，主任刘挺教授,副主任秦兵教授。
+> 极客学院：其下还有《TensorFlow 官方文档中文版》。
 
 
 ## 代码
