@@ -1,5 +1,5 @@
 # Site settings
-title: Herb
+title: Herb Home
 email: hb.zhang.chn@gmail.com
 description: Hi
 baseurl: ""
@@ -13,7 +13,7 @@ author:
   twitter  : https://twitter.com/Herb_Kitty/
 
 github: https://github.com/Herbchn
-disqus_shortname: ""
+disqus_shortname: "herbchn"
 google_analytics: 
 
 paginate: 5
