@@ -1,5 +1,5 @@
 # Site settings
-title: Herb Home
+title: Herb
 email: hb.zhang.chn@gmail.com
 description: Hi
 baseurl: ""
@@ -25,8 +25,7 @@ sass:
   sass_dir: _sass
 
 # Build settings
-# markdown  : kramdown
-markdown: maruku
-# kramdown:
-#  input: GFM
+markdown  : kramdown
+kramdown:
+   input: GFM
 permalink : /:title/
