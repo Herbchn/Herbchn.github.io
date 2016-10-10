@@ -4,7 +4,6 @@ title: "Math Test"
 date: 2016-10-10
 categories: test
 comments: true
-use_math: true
 ---
 # Math Test
 $x=a+b$

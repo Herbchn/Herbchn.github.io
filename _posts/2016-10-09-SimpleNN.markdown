@@ -4,6 +4,7 @@ title:  "Simple 2-Layer Neural Network"
 date:   2016-09-20
 categories: Herb
 comments: true
+use_math: true
 ---
 
 ![2-layer-nn]({{site.url}}/images/2-layer-nn.jpg)
