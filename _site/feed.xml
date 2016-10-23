@@ -5,8 +5,8 @@
     <description>Hi</description>
     <link>https://herbchn.github.io/</link>
     <atom:link href="https://herbchn.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 23 Oct 2016 22:27:36 +0800</pubDate>
-    <lastBuildDate>Sun, 23 Oct 2016 22:27:36 +0800</lastBuildDate>
+    <pubDate>Sun, 23 Oct 2016 22:32:51 +0800</pubDate>
+    <lastBuildDate>Sun, 23 Oct 2016 22:32:51 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -44,7 +44,8 @@
 
 &lt;ul&gt;
   &lt;li&gt;定义输入&lt;br /&gt;
-  定义输入 $x$ 和输出 $y$，其中前者是矩阵，维度0代表样本数，维度1代表样本的表示；后者是向量，对应于样本 $y$ 的正确输出。
+  定义输入 $x$ 和输出 $y$，其中前者是矩阵，维度0代表样本数，维度1代表样本的表示；后者是向量，对应于样本 $y$ 的正确输出。&lt;/li&gt;
+  &lt;li&gt;
     &lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;# define the input
 x = T.dmatrix(name=&quot;x&quot;)
 y = T.dvector(name=&quot;y&quot;)  
@@ -88,12 +89,14 @@ self.error = -y*T.log(self.g) - (1-y)*T.log(1-self.g)
 cost = self.error.mean() + regular * (self.w ** 2).sum()
 &lt;/code&gt;&lt;/pre&gt;
   &lt;/li&gt;
-  &lt;li&gt;计算梯度
+  &lt;li&gt;计算梯度&lt;/li&gt;
+  &lt;li&gt;
     &lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;# compute gradient
 gw, gb = T.grad(cost, [self.w, self.b])
 &lt;/code&gt;&lt;/pre&gt;
   &lt;/li&gt;
-  &lt;li&gt;定义入口函数
+  &lt;li&gt;定义入口函数&lt;/li&gt;
+  &lt;li&gt;
     &lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;# define reg, train, test
 self.predict = theano.function([x], self.prediction)
 self.train = theano.function([x, y], self.error, updates = [(self.w, self.w - step * gw), (self.b, self.b - step * gb)])

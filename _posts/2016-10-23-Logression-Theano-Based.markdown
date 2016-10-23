@@ -32,7 +32,8 @@ use_math: true
 # Logistic Regression
 
 - 定义输入
-	定义输入 $x$ 和输出 $y$，其中前者是矩阵，维度0代表样本数，维度1代表样本的表示；后者是向量，对应于样本 $y$ 的正确输出。    
+	定义输入 $x$ 和输出 $y$，其中前者是矩阵，维度0代表样本数，维度1代表样本的表示；后者是向量，对应于样本 $y$ 的正确输出。
+- 
 ```python
 # define the input
 x = T.dmatrix(name="x")
@@ -72,11 +73,14 @@ cost = self.error.mean() + regular * (self.w ** 2).sum()
 ```
 
 - 计算梯度
+- 
 ```python
 # compute gradient
 gw, gb = T.grad(cost, [self.w, self.b])
 ```
+
 - 定义入口函数
+- 
 ```python
 # define reg, train, test
 self.predict = theano.function([x], self.prediction)
