@@ -1,0 +1,130 @@
+<!DOCTYPE html> <html lang="pt-br"> <head> <link rel="icon" href="/images/herbblog.ico" type="image/x-ico"/> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <meta name="viewport" content="width=device-width, initial-scale=1"> <title> CNN--Theano Based &bull; Herb Home </title> <meta name="description" content="激活函数 relu def relu(x):return T.maximum(0.0, x) "> <link rel="stylesheet" href="/css/main.css"> <link rel="canonical" href="https://herbchn.github.io/CNN-Theano-Based/"> <link rel="alternate" type="application/rss+xml" title="Herb Home" href="https://herbchn.github.io/feed.xml" /> <script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-85435362-1']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script> <script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "AMS" } }, tex2jax: { inlineMath: [ ['$','$'] ], displayMath: [ ['$$','$$'] ], processEscapes: true, } }); </script> <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script> </head> <body class="single"> <main class="main"> <header class="header"> <div class="overlay"> <div class="container"> <h1 class="title"> <a href="/">Herb Home</a> </h1> <nav class="navbar"> <a href="#" class="menu-icon"> <span></span> <span></span> <span></span> </a> <ul class="nav"> <li><a href="https://github.com/Herbchn" target="_blank">Github</a></li> <li><a href="/about/">About</a></li> <li><a href="/author/">Author</a></li> </ul> </nav> </div> </div> </header> <article class="post container card"> <header class="post-header"> <h1 class="post-title">CNN--Theano Based</h1> <span class="post-meta"> <time class="post-date" datetime="2016-10-23">Oct 23, 2016</time> <span class="post-author">by Herb</span> </span> </header> <div class="post-content"> <h1 id="section">激活函数</h1> <ul> <li>relu</li> <li><pre><code class="language-python">def relu(x):
+return T.maximum(0.0, x)
+</code></pre></li> <li>tanh</li> <li><pre><code class="language-python">def tanh(x):
+return T.tanh(x)
+</code></pre></li> </ul> <h1 id="section-1">卷积层</h1><pre><code class="language-python">class ConvLayer:
+    """
+    convolutional layer.
+    """
+
+    def __init__(self, rng, input, filter_shape, image_shape, activation = "relu", w = None, b = None):
+        """
+        :param rng: A random number generator. Type: numpy.random.RandomState(*).
+        :param input: A mini_batch input. Type: 4-tensor. shape = (mini_batch_size, feature_maps, img_high, img_width)
+        :param filter_shape: Filter shape. Type: tuple or list size 4, (filter_nums, input_feature_map_num, filter_high, filter_width)
+        :param image_shape: Image shape, the shape of input. Type: tuple or list size 4, (mini_batch_size, feature_maps, image_high, image_width).
+        :param activation: Fingure which activation to use. Type: string.
+        :param w: The filters, if the user given. Type: 4-tensor. shape=(fitler_nums, input_feature_map_num, filter_high, filter_width).
+        :param b: The bias, if user given. Type: list. shape = (filter_num).
+        """
+
+        self.input = input
+        self.filter_shape = filter_shape
+        self.image_shape = image_shape
+        self.activation = activation
+
+        if w == None:
+            self.w = shared(np.asarray(rng.uniform(low = -0.01, high = 0.01, size = filter_shape), dtype = theano.config.floatX), borrow = True, name = "W_conv")
+        else:
+            self.w = shared(w, borrow = True, name = "w_conv")
+
+        if b == None:
+            self.b = shared(np.asarray(np.zeros(filter_shape[0]), dtype = theano.config.floatX), borrow = True, name = "b_conv")
+        else:
+            self.b = shared(b, borrow = True, name = "b_conv")
+
+        conv_output = conv.conv2d(input = input, filters = self.w, image_shape = self.image_shape, filter_shape = self.shape) + self.b.dimshuffle('x', 0, 'x', 'x');
+
+        if activation == None or activation == "relu":
+            self.output = relu(conv_output)
+
+        self.params = [self.w, self.b]
+</code></pre><h1 id="section-2">池化层</h1><pre><code class="language-python">class PoolLayer:
+    """
+    pooling layer
+    """
+
+    def __init__(self, input, poolsize):
+        """
+        :param input: The input. Type: 4-tensor. shape(mini_batch, input_feature_maps, image_high, image_width
+        :param poolsize: The poolsize. Type: tuple or list size 2, (pool_high, pool_width)
+        """
+        self.output = pool.pool_2d(input, ds = poolsize)
+</code></pre><h1 id="section-3">隐藏层（全连接层）</h1><pre><code class="language-python">class HiddenLayer:
+    """
+    The full connection layer.
+    """
+
+    def __init__(self, rng, input, filter_shape, activation = "relu", w = None, b = None):
+        """
+        :param input: The input. Type: 4-tensor. shape = (mini_batch, dim_in).
+        :param filter_shape: The ws' shape. Type: tuple or list size 2, (dim_in, dim_out).
+        :param activation: Choose activation. Type: string.
+        :param w: The w, if user given.
+        :param b: The b, if user given.
+        """
+        self.input = input
+        if w == None:
+            self.w = shared(np.asarray(0.01 * rng.standard_random(size = filter_shape), dtype = theano.config.floatX), borrow = True, name = "w_hidden_layer")
+        else:
+            self.w = shared(w, borrow = True, name = "w_hidden_layer")
+
+        if b == None:
+            self.b = shared(np.asarray(np.zeros(filter_shape[1]), dtype = theano.config.floatX), borrow = True, name = "b_hidden_layer")
+        else:
+            self.b = shared(b, borrow = True, name = "b_hedden_layer")
+
+        self.output = T.dot(self.input, self.w) + self.b
+
+        if activation == "relu":
+            self.output = relu(self.output)
+
+        self.params = [self.w, self.b]
+</code></pre><h1 id="section-4">多层感知机</h1><pre><code class="language-python">class MLP:
+    """
+    The multiple layers perception.
+    """
+    def __init__(self, rng, input, layer_size):
+        layers = []
+
+        # ithe output of the input_layer
+        layer_output = input
+
+        # other layers
+        for i in range(len(layer_size))[:-1]:
+            dim_in = layer_size[i]
+            dim_out = layer_size[i+1]
+            layer = HiddenLayer(rng, layer_output, (dim_in, dim_out))
+            layer_output = layer.output
+            layers.append(layer)
+
+        self.layers = layers
+</code></pre><h1 id="logression-use-softmax">Logression (use softmax)</h1><pre><code class="language-python">class LogressionLayer:
+    """
+    softmax output
+    """
+    def __init__(self, rng, input, y, filter_shape, w = None, b = None, regular = 0.01):
+        if w == None:
+            self.w = shared(np.asarray(rng.standard_random(filter_shape), dtype = theano.config.floatX), borrow = True, name = "m_logression_layer")
+        else:
+            self.w = shared(w, borrow = True, name = "m_logresssion_layer")
+
+        if b == None:
+            self.b = shared(np.asarray(np.zeros(filter_shape[1]), dtype = theano.config.floatX), borrow = True, name = "b_logression_layer")
+        else:
+            self.b = shared(b, borrow = True, name = "b_logression_layer")
+
+        # predict
+        self.p_given_x = T.nnet.softmax(T.dot(input, self.w) + self.b)
+        self.y_given_x = T.argmax(self.p_given_x, axis = 1)
+
+        # error
+        self.acc = T.mean(T.neq(y, self.y_given_x))
+
+        # cross entropy
+        cross_entropy = -T.mean(T.log(self.p_given_x)[np.range(len(y)), y])
+        self.cost = cross_entropy + regular * (w ** 2).sum()
+
+        self.params = [self.w, self.b]
+</code></pre><h1 id="section-5">最后</h1> <p>根据所需的模型结构，采用以上各层进行组合。写一个参数更新函数对所有参数进行更新。定义 theano.function 作为模型的入口（train, test, predict, etc）。</p> <aside class="share"> <span>Share this: </span> <a href="http://twitter.com/share?text=CNN--Theano Based&amp;url=https://herbchn.github.io/CNN-Theano-Based/&amp;hashtags=web,dev,blog,soudev&amp;via=nandomoreirame" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;"> <i class="fa fa-twitter-square"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?u=https://herbchn.github.io/CNN-Theano-Based/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;"> <i class="fa fa-facebook-square"></i> </a> </aside> <hr> <aside id="comments" class="disqus"> <h2 class="txt-center">Comments</h2> <div id="disqus_thread"></div> <script type="text/javascript"> var disqus_shortname = 'herbchn'; var disqus_identifier = '/CNN-Theano-Based'; var disqus_title = 'CNN--Theano Based'; var disqus_url = 'https://herbchn.github.io'; /*var disqus_developer = 1;*/ (function() { var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); })(); </script> <noscript> Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a> </noscript> </aside> </div> </article> <footer class="footer t-center"> <div class="container"> <div class="social-icons"> <ul class="text-left"> <!-- <li><a href="" target="_blank"><i class="fa fa-facebook"></i></a></li> --> <li><a href="https://twitter.com/Herb_Kitty/" target="_blank"><i class="fa fa-twitter"></i></a></li> </ul> </div> <small>&copy; 2016 All rights reserved. Made with <a href="http://jekyllrb.com" target="_blank">Jekyll</a></small> </div> </footer> </main> </body> </html></body></html>
+

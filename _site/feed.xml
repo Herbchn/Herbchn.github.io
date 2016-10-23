@@ -5,8 +5,8 @@
     <description>Hi</description>
     <link>https://herbchn.github.io/</link>
     <atom:link href="https://herbchn.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 23 Oct 2016 22:34:48 +0800</pubDate>
-    <lastBuildDate>Sun, 23 Oct 2016 22:34:48 +0800</lastBuildDate>
+    <pubDate>Sun, 23 Oct 2016 22:49:48 +0800</pubDate>
+    <lastBuildDate>Sun, 23 Oct 2016 22:49:48 +0800</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -110,6 +110,180 @@ self.test = theano.function([x,y], [self.prediction, 1 - T.mean(T.neq(self.predi
         <pubDate>Sun, 23 Oct 2016 00:00:00 +0800</pubDate>
         <link>https://herbchn.github.io/Logression-Theano-Based/</link>
         <guid isPermaLink="true">https://herbchn.github.io/Logression-Theano-Based/</guid>
+        
+        
+        <category>herb</category>
+        
+      </item>
+    
+      <item>
+        <title>CNN--Theano Based</title>
+        <description>&lt;h1 id=&quot;section&quot;&gt;激活函数&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;relu&lt;/li&gt;
+  &lt;li&gt;
+    &lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;def relu(x):
+return T.maximum(0.0, x)
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;tanh&lt;/li&gt;
+  &lt;li&gt;
+    &lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;def tanh(x):
+return T.tanh(x)
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;section-1&quot;&gt;卷积层&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;class ConvLayer:
+    &quot;&quot;&quot;
+    convolutional layer.
+    &quot;&quot;&quot;
+
+    def __init__(self, rng, input, filter_shape, image_shape, activation = &quot;relu&quot;, w = None, b = None):
+        &quot;&quot;&quot;
+        :param rng: A random number generator. Type: numpy.random.RandomState(*).
+        :param input: A mini_batch input. Type: 4-tensor. shape = (mini_batch_size, feature_maps, img_high, img_width)
+        :param filter_shape: Filter shape. Type: tuple or list size 4, (filter_nums, input_feature_map_num, filter_high, filter_width)
+        :param image_shape: Image shape, the shape of input. Type: tuple or list size 4, (mini_batch_size, feature_maps, image_high, image_width).
+        :param activation: Fingure which activation to use. Type: string.
+        :param w: The filters, if the user given. Type: 4-tensor. shape=(fitler_nums, input_feature_map_num, filter_high, filter_width).
+        :param b: The bias, if user given. Type: list. shape = (filter_num).
+        &quot;&quot;&quot;
+
+        self.input = input
+        self.filter_shape = filter_shape
+        self.image_shape = image_shape
+        self.activation = activation
+
+        if w == None:
+            self.w = shared(np.asarray(rng.uniform(low = -0.01, high = 0.01, size = filter_shape), dtype = theano.config.floatX), borrow = True, name = &quot;W_conv&quot;)
+        else:
+            self.w = shared(w, borrow = True, name = &quot;w_conv&quot;)
+
+        if b == None:
+            self.b = shared(np.asarray(np.zeros(filter_shape[0]), dtype = theano.config.floatX), borrow = True, name = &quot;b_conv&quot;)
+        else:
+            self.b = shared(b, borrow = True, name = &quot;b_conv&quot;)
+
+        conv_output = conv.conv2d(input = input, filters = self.w, image_shape = self.image_shape, filter_shape = self.shape) + self.b.dimshuffle(&#39;x&#39;, 0, &#39;x&#39;, &#39;x&#39;);
+
+        if activation == None or activation == &quot;relu&quot;:
+            self.output = relu(conv_output)
+
+        self.params = [self.w, self.b]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&quot;section-2&quot;&gt;池化层&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;class PoolLayer:
+    &quot;&quot;&quot;
+    pooling layer
+    &quot;&quot;&quot;
+
+    def __init__(self, input, poolsize):
+        &quot;&quot;&quot;
+        :param input: The input. Type: 4-tensor. shape(mini_batch, input_feature_maps, image_high, image_width
+        :param poolsize: The poolsize. Type: tuple or list size 2, (pool_high, pool_width)
+        &quot;&quot;&quot;
+        self.output = pool.pool_2d(input, ds = poolsize)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&quot;section-3&quot;&gt;隐藏层（全连接层）&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;class HiddenLayer:
+    &quot;&quot;&quot;
+    The full connection layer.
+    &quot;&quot;&quot;
+
+    def __init__(self, rng, input, filter_shape, activation = &quot;relu&quot;, w = None, b = None):
+        &quot;&quot;&quot;
+        :param input: The input. Type: 4-tensor. shape = (mini_batch, dim_in).
+        :param filter_shape: The ws&#39; shape. Type: tuple or list size 2, (dim_in, dim_out).
+        :param activation: Choose activation. Type: string.
+        :param w: The w, if user given.
+        :param b: The b, if user given.
+        &quot;&quot;&quot;
+        self.input = input
+        if w == None:
+            self.w = shared(np.asarray(0.01 * rng.standard_random(size = filter_shape), dtype = theano.config.floatX), borrow = True, name = &quot;w_hidden_layer&quot;)
+        else:
+            self.w = shared(w, borrow = True, name = &quot;w_hidden_layer&quot;)
+
+        if b == None:
+            self.b = shared(np.asarray(np.zeros(filter_shape[1]), dtype = theano.config.floatX), borrow = True, name = &quot;b_hidden_layer&quot;)
+        else:
+            self.b = shared(b, borrow = True, name = &quot;b_hedden_layer&quot;)
+
+        self.output = T.dot(self.input, self.w) + self.b
+
+        if activation == &quot;relu&quot;:
+            self.output = relu(self.output)
+
+        self.params = [self.w, self.b]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&quot;section-4&quot;&gt;多层感知机&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;class MLP:
+    &quot;&quot;&quot;
+    The multiple layers perception.
+    &quot;&quot;&quot;
+    def __init__(self, rng, input, layer_size):
+        layers = []
+
+        # ithe output of the input_layer
+        layer_output = input
+
+        # other layers
+        for i in range(len(layer_size))[:-1]:
+            dim_in = layer_size[i]
+            dim_out = layer_size[i+1]
+            layer = HiddenLayer(rng, layer_output, (dim_in, dim_out))
+            layer_output = layer.output
+            layers.append(layer)
+
+        self.layers = layers
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&quot;logression-use-softmax&quot;&gt;Logression (use softmax)&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;class LogressionLayer:
+    &quot;&quot;&quot;
+    softmax output
+    &quot;&quot;&quot;
+    def __init__(self, rng, input, y, filter_shape, w = None, b = None, regular = 0.01):
+        if w == None:
+            self.w = shared(np.asarray(rng.standard_random(filter_shape), dtype = theano.config.floatX), borrow = True, name = &quot;m_logression_layer&quot;)
+        else:
+            self.w = shared(w, borrow = True, name = &quot;m_logresssion_layer&quot;)
+
+        if b == None:
+            self.b = shared(np.asarray(np.zeros(filter_shape[1]), dtype = theano.config.floatX), borrow = True, name = &quot;b_logression_layer&quot;)
+        else:
+            self.b = shared(b, borrow = True, name = &quot;b_logression_layer&quot;)
+
+        # predict
+        self.p_given_x = T.nnet.softmax(T.dot(input, self.w) + self.b)
+        self.y_given_x = T.argmax(self.p_given_x, axis = 1)
+
+        # error
+        self.acc = T.mean(T.neq(y, self.y_given_x))
+
+        # cross entropy
+        cross_entropy = -T.mean(T.log(self.p_given_x)[np.range(len(y)), y])
+        self.cost = cross_entropy + regular * (w ** 2).sum()
+
+        self.params = [self.w, self.b]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&quot;section-5&quot;&gt;最后&lt;/h1&gt;
+&lt;p&gt;根据所需的模型结构，采用以上各层进行组合。写一个参数更新函数对所有参数进行更新。定义 theano.function  作为模型的入口（train, test, predict, etc）。&lt;/p&gt;
+</description>
+        <pubDate>Sun, 23 Oct 2016 00:00:00 +0800</pubDate>
+        <link>https://herbchn.github.io/CNN-Theano-Based/</link>
+        <guid isPermaLink="true">https://herbchn.github.io/CNN-Theano-Based/</guid>
         
         
         <category>herb</category>
